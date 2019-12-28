@@ -11,4 +11,4 @@ require (
 	golang.org/x/sys v0.0.0-20191204072324-ce4227a45e2e // indirect
 )
 
-replace github.com/imkira/go-libav => /home/green/src/github.com/xgreenx/go-libav
+replace github.com/imkira/go-libav => github.com/xgreenx/go-libav v0.0.0-20191228134753-e604eb43628c
