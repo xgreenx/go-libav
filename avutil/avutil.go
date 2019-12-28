@@ -2,6 +2,7 @@ package avutil
 
 //go:generate go run hackgenerator.go
 
+//#include <string.h>
 //#include <libavutil/avutil.h>
 //#include <libavutil/channel_layout.h>
 //#include <libavutil/dict.h>
@@ -71,6 +72,11 @@ var (
 )
 
 type LogLevel int
+
+const TEMPORARILY_UNAVAILABLE = -11
+
+var AVERROR_EAGAIN = int(C.go_av_errno_to_error(C.EAGAIN))
+var AVERROR_EOF = C.AVERROR_EOF
 
 const (
 	LogLevelQuiet   LogLevel = C.AV_LOG_QUIET
@@ -186,10 +192,41 @@ func (sfmt SampleFormat) NameOk() (string, bool) {
 	return cStringToStringOk(C.av_get_sample_fmt_name((C.enum_AVSampleFormat)(sfmt)))
 }
 
-type PixelFormat C.enum_AVPixelFormat
+type PixelFormat int
 
 const (
-	PixelFormatNone PixelFormat = C.AV_PIX_FMT_NONE
+	PIX_FMT_YUV420P PixelFormat = iota
+	PIX_FMT_YUYV422
+	PIX_FMT_RGB24
+	PIX_FMT_BGR24
+	PIX_FMT_YUV422P
+	PIX_FMT_YUV444P
+	PIX_FMT_YUV410P
+	PIX_FMT_YUV411P
+	PIX_FMT_GRAY8
+	PIX_FMT_MONOWHITE
+	PIX_FMT_MONOBLACK
+	PIX_FMT_PAL8
+	PIX_FMT_YUVJ420P
+	PIX_FMT_YUVJ422P
+	PIX_FMT_YUVJ444P
+	PIX_FMT_XVMC_MPEG2_MC
+	PIX_FMT_XVMC_MPEG2_IDCT
+	PIX_FMT_UYVY422
+	PIX_FMT_UYYVYY411
+	PIX_FMT_BGR8
+	PIX_FMT_BGR4
+	PIX_FMT_BGR4_BYTE
+	PIX_FMT_RGB8
+	PIX_FMT_RGB4
+	PIX_FMT_RGB4_BYTE
+	PIX_FMT_NV12
+	PIX_FMT_NV21
+	PIX_FMT_ARGB
+	PIX_FMT_RGBA
+	PIX_FMT_ABGR
+	PIX_FMT_BGRA
+	PIX_FMT_NONE = -1
 )
 
 func FindPixelFormatByName(name string) (PixelFormat, bool) {
@@ -770,6 +807,14 @@ func (f *Frame) Ref(dst *Frame) error {
 	return nil
 }
 
+func (f *Frame) MakeWritable() error {
+	code := C.av_frame_make_writable(f.CAVFrame)
+	if code < 0 {
+		return NewErrorFromCode(ErrorCode(code))
+	}
+	return nil
+}
+
 func (f *Frame) Unref() {
 	C.av_frame_unref(f.CAVFrame)
 }
@@ -790,8 +835,16 @@ func (f *Frame) Data(index int) unsafe.Pointer {
 	return unsafe.Pointer(f.CAVFrame.data[index])
 }
 
-func (f *Frame) SetData(index int, data unsafe.Pointer) {
-	f.CAVFrame.data[index] = (*C.uint8_t)(data)
+func (f *Frame) SetData(index int, data []byte) {
+	f.CAVFrame.data[index] = (*C.uint8_t)(C.CBytes(data))
+}
+
+func (f *Frame) FreeData(index int) {
+	defer C.free(unsafe.Pointer(f.CAVFrame.data[index]))
+}
+
+func (f *Frame) CopyData(index int, data []byte) {
+	C.memcpy(unsafe.Pointer(f.CAVFrame.data[index]), C.CBytes(data), C.ulong(len(data)))
 }
 
 func (f *Frame) LineSize(index int) int {

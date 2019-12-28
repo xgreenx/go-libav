@@ -40,10 +40,11 @@ cover:
 clean:
 	rm -rf fixtures
 
-ffmpeg30:
-	wget -O ffmpeg30.tar.bz2 http://ffmpeg.org/releases/ffmpeg-3.0.8.tar.bz2
-	mkdir ffmpeg30 && tar xf ffmpeg30.tar.bz2 -C ffmpeg30 --strip-components=1 && cd ffmpeg30 && ./configure --prefix=/usr/local --disable-debug --enable-pthreads --enable-nonfree --enable-gpl --disable-indev=jack --enable-libx264 --enable-libfaac --enable-libmp3lame --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libxvid --enable-libmp3lame --enable-openssl && make && sudo make install
-
 ffmpeg33:
-	wget -O ffmpeg33.tar.bz2 http://ffmpeg.org/releases/ffmpeg-3.3.2.tar.bz2
-	mkdir ffmpeg33 && tar xf ffmpeg33.tar.bz2 -C ffmpeg33 --strip-components=1 && cd ffmpeg33 && ./configure --prefix=/usr/local --disable-debug --enable-pthreads --enable-nonfree --enable-gpl --disable-indev=jack --enable-libx264 --enable-libmp3lame --enable-libtheora --enable-libvorbis --enable-libvpx --enable-libxvid --enable-libmp3lame --enable-openssl && make && sudo make install
+	sudo apt-get install -y yasm
+	sudo apt-get install -y yasm libvpx. libx264.
+#	wget -O x264.tar.bz2 ftp://ftp.videolan.org/pub/x264/snapshots/x264-snapshot-20170607-2245-stable.tar.bz2
+	wget -O ffmpeg34.tar.bz2 http://ffmpeg.org/releases/ffmpeg-3.4.2.tar.bz2
+#	mkdir x264 && tar xf x264.tar.bz2 -C x264 --strip-components=1 && cd x264/ && ./configure --prefix=/usr/local --enable-static && make lib-static -j 4 && sudo make install
+	mkdir ffmpeg34 && tar xf ffmpeg34.tar.bz2 -C ffmpeg34 --strip-components=1 && cd ffmpeg34 && ./configure --prefix=/usr/local --disable-debug --enable-pthreads --enable-nonfree --enable-gpl --disable-indev=jack --enable-libx264 --enable-shared --disable-static && make -j 4 && sudo make install
+#	mkdir ffmpeg34 && tar xf ffmpeg34.tar.bz2 -C ffmpeg34 --strip-components=1 && cd ffmpeg34 && ./configure --prefix=/usr/local --disable-debug --enable-pthreads --enable-nonfree --enable-gpl --disable-indev=jack --enable-libx264 --enable-static --disable-shared --extra-libs=--static && make -j 4 && sudo make install

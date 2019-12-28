@@ -79,3 +79,10 @@ www.opensource.org/licenses/MIT
 Copyright (c) 2015 Mario Freitas. See
 [LICENSE](http://github.com/imkira/go-libav/blob/master/LICENSE)
 for further details.
+
+
+```cassandraql
+sudo apt-get -y --force-yes install autoconf automake build-essential libass-dev libfreetype6-dev libsdl1.2-dev libtheora-dev libtool libva-dev libvdpau-dev libvorbis-dev libxcb1-dev libxcb-shm0-dev libxcb-xfixes0-dev pkg-config texi2html zlib1g-dev
+sudo apt-get install yasm
+sudo apt-get install yasm libvpx. libx264.
+```
