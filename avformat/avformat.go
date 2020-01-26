@@ -4,6 +4,7 @@ package avformat
 //#include <libavutil/avstring.h>
 //#include <libavcodec/avcodec.h>
 //#include <libavformat/avformat.h>
+//#include <libavdevice/avdevice.h>
 //
 //#ifdef AVFMT_FLAG_FAST_SEEK
 //#define GO_AVFMT_FLAG_FAST_SEEK AVFMT_FLAG_FAST_SEEK
@@ -36,7 +37,7 @@ package avformat
 //typedef int (*AVFormatContextIOOpenCallback)(struct AVFormatContext *s, AVIOContext **pb, const char *url, int flags, AVDictionary **options);
 //typedef void (*AVFormatContextIOCloseCallback)(struct AVFormatContext *s, AVIOContext *pb);
 //
-// #cgo pkg-config: libavformat libavutil
+// #cgo pkg-config: libavformat libavutil libavdevice
 import "C"
 
 import (
@@ -57,10 +58,10 @@ var (
 type Flags int
 
 const (
-	FlagNoFile       Flags = C.AVFMT_NOFILE
-	FlagNeedNumber   Flags = C.AVFMT_NEEDNUMBER
-	FlagShowIDs      Flags = C.AVFMT_SHOW_IDS
-	FlagRawPicture   Flags = C.AVFMT_RAWPICTURE
+	FlagNoFile     Flags = C.AVFMT_NOFILE
+	FlagNeedNumber Flags = C.AVFMT_NEEDNUMBER
+	FlagShowIDs    Flags = C.AVFMT_SHOW_IDS
+	//FlagRawPicture   Flags = C.AVFMT_RAWPICTURE
 	FlagGlobalHeader Flags = C.AVFMT_GLOBALHEADER
 	FlagNoTimestamps Flags = C.AVFMT_NOTIMESTAMPS
 	FlagGenericIndex Flags = C.AVFMT_GENERIC_INDEX
@@ -167,6 +168,7 @@ func Version() (int, int, int) {
 
 func RegisterAll() {
 	C.av_register_all()
+	C.avdevice_register_all()
 }
 
 type CodecTagList struct {
