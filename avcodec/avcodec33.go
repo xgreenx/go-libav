@@ -53,7 +53,7 @@ func (ctx *Context) CopyTo(dst *Context) error {
 	return nil
 }
 
-func (ctx *Context) DecodeVideo(pkt *Packet, onFrame func(*avutil.Frame)) (int, error) {
+func (ctx *Context) DecodeVideo(pkt *Packet, onFrame func(*avutil.Frame) error) (int, error) {
 	code, err := ctx.SendPacket(pkt)
 	if err != nil {
 		return code, err
@@ -74,8 +74,11 @@ func (ctx *Context) DecodeVideo(pkt *Packet, onFrame func(*avutil.Frame)) (int, 
 			return code, err
 		}
 
-		onFrame(frame)
+		err = onFrame(frame)
 		frame.Free()
+		if err != nil {
+			return 0, err
+		}
 	}
 
 	return 0, nil
@@ -117,7 +120,7 @@ func (ctx *Context) DecodeAudio(pkt *Packet, frame *avutil.Frame) (int, error) {
 	return int(code), err
 }
 
-func (ctx *Context) EncodeVideo(pkt *Packet, frame *avutil.Frame, onData func([]byte)) (int, error) {
+func (ctx *Context) EncodeVideo(pkt *Packet, frame *avutil.Frame, onData func([]byte) error) (int, error) {
 	code, err := ctx.SendFrame(frame)
 	if err != nil {
 		return code, err
@@ -134,9 +137,12 @@ func (ctx *Context) EncodeVideo(pkt *Packet, frame *avutil.Frame, onData func([]
 		}
 
 		data := C.GoBytes(pkt.Data(), C.int(pkt.Size()))
-		onData(data)
+		err = onData(data)
 
 		pkt.Unref()
+		if err != nil {
+			return 0, err
+		}
 	}
 
 	return 0, nil
