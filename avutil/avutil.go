@@ -843,10 +843,6 @@ func (f *Frame) FreeData(index int) {
 	defer C.free(unsafe.Pointer(f.CAVFrame.data[index]))
 }
 
-func (f *Frame) CopyData(index int, data []byte) {
-	C.memcpy(unsafe.Pointer(f.CAVFrame.data[index]), C.CBytes(data), C.ulong(len(data)))
-}
-
 func (f *Frame) LineSize(index int) int {
 	return int(f.CAVFrame.linesize[index])
 }
